@@ -1,0 +1,40 @@
+{
+  "$schema": "https://fbflipper.com/schemas/plugin-package/v2.json",
+  "name": "flipper-plugin-kvcompat",
+  "id": "KVCompat",
+  "version": "1.0.0",
+  "pluginType": "client",
+  "main": "dist/bundle.js",
+  "flipperBundlerEntry": "src/index.tsx",
+  "license": "MIT",
+  "keywords": [
+    "flipper-plugin",
+    "KVCompat",
+    "MMKV",
+    "SharedPreferences"
+  ],
+  "icon": "apps",
+  "title": "KVCompat Viewer",
+  "scripts": {
+    "lint": "flipper-pkg lint",
+    "prepack": "flipper-pkg lint && flipper-pkg bundle",
+    "build": "flipper-pkg bundle",
+    "watch": "flipper-pkg bundle --watch"
+  },
+  "peerDependencies": {
+    "@emotion/styled": "latest",
+    "antd": "^4.23.4",
+    "flipper-plugin": "0.179.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.191",
+    "@types/react": "17.0.2",
+    "@types/react-dom": "17.0.2",
+    "flipper-pkg": "0.179.0"
+  }
+}
