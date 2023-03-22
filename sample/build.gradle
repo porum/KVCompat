@@ -34,13 +34,13 @@ android {
 
 dependencies {
 //    implementation project(":kvcompat")
-    implementation "io.github.porum:kvcompat:0.0.1-SNAPSHOT"
+    implementation "io.github.porum:kvcompat:$VERSION"
 
     debugImplementation "com.facebook.soloader:soloader:0.10.4"
     debugImplementation "com.facebook.flipper:flipper:0.179.0"
     releaseImplementation "com.facebook.flipper:flipper-noop:0.179.0"
 //    debugImplementation project(":kvcompat-flipper-plugin")
-    debugImplementation "io.github.porum:kvcompat-flipper-plugin:0.0.1-SNAPSHOT"
+    debugImplementation "io.github.porum:kvcompat-flipper-plugin:$VERSION"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
