@@ -2,24 +2,38 @@ package io.github.porum.kvcompat
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.widget.TextView
+import android.widget.EditText
 
 class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    val global = KVCompat.moduleOfMainProcess(this, "global")
-    global.putString("author", "porum")
-    global.putString("project", "KVCompat")
-    global.putString("url", "https://github.com/porum/KVCompat")
+    val authorEt = findViewById<EditText>(R.id.authorEt)
+    val projectEt = findViewById<EditText>(R.id.projectEt)
+    val repositoryEt = findViewById<EditText>(R.id.repositoryEt)
 
     val config = KVCompat.moduleOfMainProcess(this, "config")
-    val version = config.getString("version")
-    if (version.isEmpty()) {
-      config.putString("version", "1.0.0")
+    config.putString("version", "1.0.0")
+
+    val global = KVCompat.moduleOfMainProcess(this, "global")
+    global.putString("author", authorEt.text.toString())
+    global.putString("project", projectEt.text.toString())
+    global.putString("repository", repositoryEt.text.toString())
+
+    authorEt.setOnEditorActionListener { v, actionId, event ->
+      global.putString("author", v.text.toString())
+      return@setOnEditorActionListener true
     }
-    findViewById<TextView>(R.id.textView).text = config.getString("version")
+    projectEt.setOnEditorActionListener { v, actionId, event ->
+      global.putString("project", v.text.toString())
+      return@setOnEditorActionListener true
+    }
+    repositoryEt.setOnEditorActionListener { v, actionId, event ->
+      global.putString("repository", v.text.toString())
+      return@setOnEditorActionListener true
+    }
+
   }
+
 }

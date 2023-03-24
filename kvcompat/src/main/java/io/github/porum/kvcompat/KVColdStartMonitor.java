@@ -20,14 +20,14 @@ public class KVColdStartMonitor {
   private static final Map<String, Long> moduleInitTimeMap = new LinkedHashMap<>();
   private static final IKVModuleInitCallback kvModuleInitCallback = new IKVModuleInitCallback() {
     @Override
-    public void onStartInit(@NotNull String module, boolean supportMultiProcess, boolean isNewModule) {
+    public void onStartInit(@NotNull String module, boolean supportMultiProcess) {
       if (isNewModuleOnMainThread(module)) {
         startInitTime = SystemClock.elapsedRealtime();
       }
     }
 
     @Override
-    public void onFinishInit(@NotNull String module, boolean supportMultiProcess, boolean isNewModule, boolean isSuccess) {
+    public void onFinishInit(@NotNull String module, boolean supportMultiProcess, boolean isSuccess) {
       if (isNewModuleOnMainThread(module)) {
         if (startInitTime > 0) {
           long cost = SystemClock.elapsedRealtime() - startInitTime;

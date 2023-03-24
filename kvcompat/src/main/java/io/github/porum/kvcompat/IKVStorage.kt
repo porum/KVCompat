@@ -8,6 +8,7 @@ import android.content.SharedPreferences
 interface IKVStorage : SharedPreferences, SharedPreferences.Editor {
   val name: String
   val supportMultiProcess: Boolean
+  fun setKVStorageEditorCallback(callback: IKVEditorCallback)
   fun importFromSharedPreferences(sharedPreferences: SharedPreferences): Int
   fun getInt(key: String): Int
   fun getLong(key: String): Long
@@ -23,6 +24,6 @@ interface IKVEditorCallback {
 }
 
 interface IKVModuleInitCallback {
-  fun onStartInit(module: String, supportMultiProcess: Boolean, isNewModule: Boolean)
-  fun onFinishInit(module: String, supportMultiProcess: Boolean, isNewModule: Boolean, isSuccess: Boolean)
+  fun onStartInit(module: String, supportMultiProcess: Boolean)
+  fun onFinishInit(module: String, supportMultiProcess: Boolean, isSuccess: Boolean)
 }

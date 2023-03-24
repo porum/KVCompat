@@ -10,7 +10,7 @@ private const val TAG = "KVErrorHandler"
 private const val RECOVER_CRC_CHECK_FAIL = 1
 private const val RECOVER_FILE_LENGTH_ERROR = 2
 
-class KVErrorHandler(private val moduleMap: Map<String, Boolean>) : MMKVHandler {
+class KVErrorHandler(private val instanceMap: Map<String, IKVStorage>) : MMKVHandler {
 
   override fun onMMKVCRCCheckFail(mmapID: String): MMKVRecoverStrategic {
     trackMMKVRecover(mmapID, RECOVER_CRC_CHECK_FAIL)
@@ -44,8 +44,8 @@ class KVErrorHandler(private val moduleMap: Map<String, Boolean>) : MMKVHandler 
 
   private fun trackMMKVRecover(module: String, type: Int) {
     var supportMultiProcess: Boolean
-    synchronized(moduleMap) {
-      supportMultiProcess = moduleMap[module] ?: return
+    synchronized(instanceMap) {
+      supportMultiProcess = instanceMap[module]?.supportMultiProcess ?: return
     }
     if (type == RECOVER_CRC_CHECK_FAIL) {
       LogUtils.e(TAG, "onMMKVCRCCheckFail, module: $module, supportMultiProcess: $supportMultiProcess")

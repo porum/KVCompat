@@ -26,7 +26,7 @@ class MMKVStorage(
 
   private var editorCallback: IKVEditorCallback? = null
 
-  fun setKVStorageEditorCallback(callback: IKVEditorCallback) {
+  override fun setKVStorageEditorCallback(callback: IKVEditorCallback) {
     editorCallback = callback
   }
 
@@ -231,8 +231,9 @@ class MMKVStorage(
   override fun putString(key: String, value: String?): SharedPreferences.Editor {
     value?.let { notifyPutString(key, it) }
     try {
-      mmkv.putString(getTypedKey<String>(key), value)
-      notifyChanged(key)
+      val typedKey = getTypedKey<String>(key)
+      mmkv.putString(typedKey, value)
+      notifyChanged(typedKey)
     } catch (th: Throwable) {
       LogUtils.e(TAG, "put kv error. key=$key, value=$value", th)
     }
@@ -242,8 +243,9 @@ class MMKVStorage(
   override fun putStringSet(key: String, values: Set<String>?): SharedPreferences.Editor {
     values?.let { notifyPutStringSet(key, it) }
     try {
-      mmkv.putStringSet(getTypedKey<Set<String>>(key), values)
-      notifyChanged(key)
+      val typedKey = getTypedKey<Set<String>>(key)
+      mmkv.putStringSet(typedKey, values)
+      notifyChanged(typedKey)
     } catch (th: Throwable) {
       LogUtils.e(TAG, "put kv error. key=$key, values=$values", th)
     }
@@ -252,8 +254,9 @@ class MMKVStorage(
 
   override fun putInt(key: String, value: Int): SharedPreferences.Editor {
     try {
-      mmkv.putInt(getTypedKey<Int>(key), value)
-      notifyChanged(key)
+      val typedKey = getTypedKey<Int>(key)
+      mmkv.putInt(typedKey, value)
+      notifyChanged(typedKey)
     } catch (th: Throwable) {
       LogUtils.e(TAG, "put kv error. key=$key, value=$value", th)
     }
@@ -262,8 +265,9 @@ class MMKVStorage(
 
   override fun putLong(key: String, value: Long): SharedPreferences.Editor {
     try {
-      mmkv.putLong(getTypedKey<Long>(key), value)
-      notifyChanged(key)
+      val typedKey = getTypedKey<Long>(key)
+      mmkv.putLong(typedKey, value)
+      notifyChanged(typedKey)
     } catch (th: Throwable) {
       LogUtils.e(TAG, "put kv error. key=$key, value=$value", th)
     }
@@ -272,8 +276,9 @@ class MMKVStorage(
 
   override fun putFloat(key: String, value: Float): SharedPreferences.Editor {
     try {
-      mmkv.putFloat(getTypedKey<Float>(key), value)
-      notifyChanged(key)
+      val typedKey = getTypedKey<Float>(key)
+      mmkv.putFloat(typedKey, value)
+      notifyChanged(typedKey)
     } catch (th: Throwable) {
       LogUtils.e(TAG, "put kv error. key=$key, value=$value", th)
     }
@@ -282,8 +287,9 @@ class MMKVStorage(
 
   override fun putBoolean(key: String, value: Boolean): SharedPreferences.Editor {
     try {
-      mmkv.putBoolean(getTypedKey<Boolean>(key), value)
-      notifyChanged(key)
+      val typedKey = getTypedKey<Boolean>(key)
+      mmkv.putBoolean(typedKey, value)
+      notifyChanged(typedKey)
     } catch (th: Throwable) {
       LogUtils.e(TAG, "put kv error. key=$key, value=$value", th)
     }
@@ -292,8 +298,9 @@ class MMKVStorage(
 
   fun putDouble(key: String, value: Double): SharedPreferences.Editor {
     try {
-      mmkv.encode(getTypedKey<Double>(key), value)
-      notifyChanged(key)
+      val typedKey = getTypedKey<Double>(key)
+      mmkv.encode(typedKey, value)
+      notifyChanged(typedKey)
     } catch (th: Throwable) {
       LogUtils.e(TAG, "put kv error. key=$key, value=$value", th)
     }

@@ -33,7 +33,6 @@ public class KVCompat {
   private static volatile boolean isInit = false;
   private static int retryCount = 0;
 
-  private static final Map<String, Boolean> moduleMap = new ConcurrentHashMap<>();
   private static final Map<String, IKVStorage> instanceMap = new ConcurrentHashMap<>();
 
   private static final ArrayList<IKVModuleInitCallback> kvModuleInitCallbacks = new ArrayList<>();
@@ -99,37 +98,43 @@ public class KVCompat {
 
   public static IKVStorage module(Context context, String module, boolean supportMultiProcess) {
     LogUtils.i(TAG, "module call, module: " + module + ", supportMultiProcess: " + supportMultiProcess);
+
+    if (instanceMap.containsKey(module)) {
+      return instanceMap.get(module);
+    }
+
     if (!PreConditions.checkNotNull(context, "KVStorage init failed due to context is null.")) {
       IKVStorage dummyStorage = new DummyKVStorage(module, supportMultiProcess);
       instanceMap.put(module, dummyStorage);
       return dummyStorage;
     }
 
+    notifyStartInit(module, supportMultiProcess);
+
+    IKVStorage storage;
     MMKV mmkv = null;
+    boolean isSuccess = true;
     if (retryInit(context)) {
-      boolean isNewModule = !moduleMap.containsKey(module);
-      notifyStartInit(module, supportMultiProcess, isNewModule);
-      moduleMap.put(module, supportMultiProcess);
-      boolean isSuccess = true;
       try {
         mmkv = MMKV.mmkvWithID(module, supportMultiProcess ? MMKV.MULTI_PROCESS_MODE : MMKV.SINGLE_PROCESS_MODE);
       } catch (Throwable th) {
         isSuccess = false;
-        moduleMap.remove(module);
         LogUtils.e(TAG, "call mmkvwithID occur error.", th);
       }
-      notifyFinishInit(module, supportMultiProcess, isNewModule, isSuccess);
     }
-    if (mmkv == null) {
+    if (mmkv != null) {
+      storage = new MMKVStorage(mmkv, module, supportMultiProcess);
+      storage.setKVStorageEditorCallback(kvEditorCallback);
+      instanceMap.put(module, storage);
+    } else {
       SharedPreferences prefs = context.getSharedPreferences(module, Context.MODE_PRIVATE);
-      IKVStorage spStorage = new SPStorage(prefs, module, false);
-      instanceMap.put(module, spStorage);
-      return spStorage;
+      storage = new SPStorage(prefs, module, false);
+      instanceMap.put(module, storage);
     }
 
-    MMKVStorage storage = new MMKVStorage(mmkv, module, supportMultiProcess);
-    storage.setKVStorageEditorCallback(kvEditorCallback);
-    instanceMap.put(module, storage);
+
+
+    notifyFinishInit(module, supportMultiProcess, isSuccess);
     return storage;
   }
 
@@ -147,7 +152,7 @@ public class KVCompat {
         if (!isInit) {
           try {
             String dir = context.getFilesDir().getAbsolutePath() + "/mmkv";
-            String rootDir = MMKV.initialize(context, dir, null, MMKVLogLevel.LevelInfo, new KVErrorHandler(moduleMap));
+            String rootDir = MMKV.initialize(context, dir, null, MMKVLogLevel.LevelInfo, new KVErrorHandler(instanceMap));
             LogUtils.i(TAG, "mmkv version: " + MMKV.version() + ", root: " + rootDir);
             isInit = true;
           } catch (Throwable th) {
@@ -158,20 +163,20 @@ public class KVCompat {
     }
   }
 
-  private static void notifyStartInit(String module, boolean supportMultiProcess, boolean isNewModule) {
+  private static void notifyStartInit(String module, boolean supportMultiProcess) {
     IKVModuleInitCallback[] callbacks = collectModuleInitCallbacks();
     if (callbacks != null) {
       for (IKVModuleInitCallback callback : callbacks) {
-        callback.onStartInit(module, supportMultiProcess, isNewModule);
+        callback.onStartInit(module, supportMultiProcess);
       }
     }
   }
 
-  private static void notifyFinishInit(String module, boolean supportMultiProcess, boolean isNewModule, boolean isSuccess) {
+  private static void notifyFinishInit(String module, boolean supportMultiProcess, boolean isSuccess) {
     IKVModuleInitCallback[] callbacks = collectModuleInitCallbacks();
     if (callbacks != null) {
       for (IKVModuleInitCallback callback : callbacks) {
-        callback.onFinishInit(module, supportMultiProcess, isNewModule, isSuccess);
+        callback.onFinishInit(module, supportMultiProcess, isSuccess);
       }
     }
   }

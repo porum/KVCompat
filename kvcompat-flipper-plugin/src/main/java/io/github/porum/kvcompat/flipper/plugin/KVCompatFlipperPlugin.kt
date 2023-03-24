@@ -19,11 +19,16 @@ class KVCompatFlipperPlugin : FlipperPlugin {
 
   private val onChangedListener = OnSharedPreferenceChangeListener { prefs, key ->
     if (connection == null || prefs !is IKVStorage) return@OnSharedPreferenceChangeListener
-    try {
-      val kvStorage = getKVStorageFor(prefs.name)
-    } catch (e: IllegalStateException) {
-
-    }
+    connection!!.send(
+      "valueChange",
+      FlipperObject.Builder()
+        .put("module", prefs.name)
+        .put("key", key)
+        .put("time", System.currentTimeMillis())
+        .put("deleted", !prefs.contains(key))
+        .put("value", prefs.all[key])
+        .build()
+    )
   }
 
   constructor(context: Context, name: String) : this(context, name, false)
@@ -34,7 +39,9 @@ class KVCompatFlipperPlugin : FlipperPlugin {
   constructor(context: Context, descriptors: List<KVStorageDescriptor>) {
     kvStorageList = HashMap(descriptors.size)
     for (descriptor in descriptors) {
-      kvStorageList[descriptor.getKVStorage(context)] = descriptor
+      val kvStorage = descriptor.getKVStorage(context)
+      kvStorage.registerOnSharedPreferenceChangeListener(onChangedListener)
+      kvStorageList[kvStorage] = descriptor
     }
   }
 

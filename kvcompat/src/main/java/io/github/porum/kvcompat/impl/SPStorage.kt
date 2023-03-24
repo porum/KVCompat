@@ -1,6 +1,7 @@
 package io.github.porum.kvcompat.impl
 
 import android.content.SharedPreferences
+import io.github.porum.kvcompat.IKVEditorCallback
 import io.github.porum.kvcompat.IKVStorage
 
 /**
@@ -11,6 +12,12 @@ class SPStorage(
   override val name: String,
   override val supportMultiProcess: Boolean,
 ) : IKVStorage {
+
+  private var editorCallback: IKVEditorCallback? = null
+
+  override fun setKVStorageEditorCallback(callback: IKVEditorCallback) {
+    editorCallback = callback
+  }
 
   override fun importFromSharedPreferences(sharedPreferences: SharedPreferences): Int {
     return 0
@@ -24,7 +31,7 @@ class SPStorage(
     return sp.getInt(key, 0)
   }
 
-  override fun getInt(key: String?, defValue: Int): Int {
+  override fun getInt(key: String, defValue: Int): Int {
     return sp.getInt(key, defValue)
   }
 
@@ -32,7 +39,7 @@ class SPStorage(
     return sp.getLong(key, 0L)
   }
 
-  override fun getLong(key: String?, defValue: Long): Long {
+  override fun getLong(key: String, defValue: Long): Long {
     return sp.getLong(key, defValue)
   }
 
@@ -40,7 +47,7 @@ class SPStorage(
     return sp.getFloat(key, 0F)
   }
 
-  override fun getFloat(key: String?, defValue: Float): Float {
+  override fun getFloat(key: String, defValue: Float): Float {
     return sp.getFloat(key, defValue)
   }
 
@@ -48,7 +55,7 @@ class SPStorage(
     return sp.getBoolean(key, false)
   }
 
-  override fun getBoolean(key: String?, defValue: Boolean): Boolean {
+  override fun getBoolean(key: String, defValue: Boolean): Boolean {
     return sp.getBoolean(key, defValue)
   }
 
@@ -64,11 +71,11 @@ class SPStorage(
     return sp.getStringSet(key, hashSetOf())
   }
 
-  override fun getStringSet(key: String?, defValues: Set<String>?): Set<String>? {
+  override fun getStringSet(key: String, defValues: Set<String>?): Set<String>? {
     return sp.getStringSet(key, defValues)
   }
 
-  override fun contains(key: String?): Boolean {
+  override fun contains(key: String): Boolean {
     return sp.contains(key)
   }
 
@@ -84,31 +91,33 @@ class SPStorage(
     return sp.unregisterOnSharedPreferenceChangeListener(listener)
   }
 
-  override fun putString(key: String?, value: String?): SharedPreferences.Editor {
+  override fun putString(key: String, value: String?): SharedPreferences.Editor {
+    value?.let { notifyPutString(key, it) }
     return sp.edit().putString(key, value)
   }
 
-  override fun putStringSet(key: String?, values: MutableSet<String>?): SharedPreferences.Editor {
+  override fun putStringSet(key: String, values: MutableSet<String>?): SharedPreferences.Editor {
+    values?.let { notifyPutStringSet(key, it) }
     return sp.edit().putStringSet(key, values)
   }
 
-  override fun putInt(key: String?, value: Int): SharedPreferences.Editor {
+  override fun putInt(key: String, value: Int): SharedPreferences.Editor {
     return sp.edit().putInt(key, value)
   }
 
-  override fun putLong(key: String?, value: Long): SharedPreferences.Editor {
+  override fun putLong(key: String, value: Long): SharedPreferences.Editor {
     return sp.edit().putLong(key, value)
   }
 
-  override fun putFloat(key: String?, value: Float): SharedPreferences.Editor {
+  override fun putFloat(key: String, value: Float): SharedPreferences.Editor {
     return sp.edit().putFloat(key, value)
   }
 
-  override fun putBoolean(key: String?, value: Boolean): SharedPreferences.Editor {
+  override fun putBoolean(key: String, value: Boolean): SharedPreferences.Editor {
     return sp.edit().putBoolean(key, value)
   }
 
-  override fun remove(key: String?): SharedPreferences.Editor {
+  override fun remove(key: String): SharedPreferences.Editor {
     return sp.edit().remove(key)
   }
 
@@ -122,5 +131,13 @@ class SPStorage(
 
   override fun apply() {
     sp.edit().apply()
+  }
+
+  private fun notifyPutString(key: String, values: String) {
+    editorCallback?.onPutString(name, key, values)
+  }
+
+  private fun notifyPutStringSet(key: String, values: Set<String>) {
+    editorCallback?.onPutStringSet(name, key, values)
   }
 }

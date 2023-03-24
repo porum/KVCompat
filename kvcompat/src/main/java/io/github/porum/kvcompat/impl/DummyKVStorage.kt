@@ -1,6 +1,7 @@
 package io.github.porum.kvcompat.impl
 
 import android.content.SharedPreferences
+import io.github.porum.kvcompat.IKVEditorCallback
 import io.github.porum.kvcompat.IKVStorage
 
 /**
@@ -10,6 +11,11 @@ class DummyKVStorage(
   override val name: String,
   override val supportMultiProcess: Boolean,
 ) : IKVStorage {
+
+  override fun setKVStorageEditorCallback(callback: IKVEditorCallback) {
+
+  }
+
   override fun importFromSharedPreferences(sharedPreferences: SharedPreferences): Int {
     return 0
   }

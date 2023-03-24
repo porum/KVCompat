@@ -4,6 +4,7 @@ import android.app.Application
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperClient
+import com.facebook.flipper.plugins.sharedpreferences.SharedPreferencesFlipperPlugin
 import com.facebook.soloader.SoLoader
 import io.github.porum.kvcompat.flipper.plugin.KVCompatFlipperPlugin
 import io.github.porum.kvcompat.flipper.plugin.KVStorageDescriptor
@@ -18,6 +19,7 @@ class App : Application() {
     SoLoader.init(this, false)
     if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
       client = AndroidFlipperClient.getInstance(this).also {
+        it.addPlugin(SharedPreferencesFlipperPlugin(this))
         it.start()
       }
       observeChanged()
@@ -27,23 +29,16 @@ class App : Application() {
   private fun observeChanged() {
     val descriptors = mutableListOf<KVStorageDescriptor>()
     KVCompat.addKVModuleInitCallback(object : IKVModuleInitCallback {
-      override fun onFinishInit(
-        module: String,
-        supportMultiProcess: Boolean,
-        isNewModule: Boolean,
-        isSuccess: Boolean
-      ) {
-        if (isNewModule) {
-          descriptors.add(KVStorageDescriptor(module, supportMultiProcess))
-          val kvCompatPlugin = client?.getPluginByClass(KVCompatFlipperPlugin::class.java)
-          if (kvCompatPlugin != null) {
-            client?.removePlugin(kvCompatPlugin)
-          }
-          client?.addPlugin(KVCompatFlipperPlugin(this@App, descriptors))
+      override fun onFinishInit(module: String, supportMultiProcess: Boolean, isSuccess: Boolean) {
+        descriptors.add(KVStorageDescriptor(module, supportMultiProcess))
+        val kvCompatPlugin = client?.getPluginByClass(KVCompatFlipperPlugin::class.java)
+        if (kvCompatPlugin != null) {
+          client?.removePlugin(kvCompatPlugin)
         }
+        client?.addPlugin(KVCompatFlipperPlugin(this@App, descriptors))
       }
 
-      override fun onStartInit(module: String, supportMultiProcess: Boolean, isNewModule: Boolean) {
+      override fun onStartInit(module: String, supportMultiProcess: Boolean) {
       }
     })
   }
