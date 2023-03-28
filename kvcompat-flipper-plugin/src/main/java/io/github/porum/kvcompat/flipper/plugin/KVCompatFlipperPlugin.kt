@@ -2,6 +2,7 @@ package io.github.porum.kvcompat.flipper.plugin
 
 import android.content.Context
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import com.facebook.flipper.core.FlipperArray
 import com.facebook.flipper.core.FlipperConnection
 import com.facebook.flipper.core.FlipperObject
 import com.facebook.flipper.core.FlipperPlugin
@@ -39,13 +40,25 @@ class KVCompatFlipperPlugin : FlipperPlugin {
   constructor(context: Context, descriptors: List<KVStorageDescriptor>) {
     kvStorageList = HashMap(descriptors.size)
     for (descriptor in descriptors) {
-      val kvStorage = descriptor.getKVStorage(context)
-      kvStorage.registerOnSharedPreferenceChangeListener(onChangedListener)
-      kvStorageList[kvStorage] = descriptor
+      addDescriptor(context, descriptor)
     }
   }
 
   override fun getId() = "KVCompat"
+
+  fun addDescriptor(context: Context, descriptor: KVStorageDescriptor) {
+    val kvStorage = descriptor.getKVStorage(context)
+    kvStorage.registerOnSharedPreferenceChangeListener(onChangedListener)
+    kvStorageList[kvStorage] = descriptor
+    // 如果还未连接，则连接上之后client会全量获取所有的module
+    // 如果已经连接，则主动send到client
+    connection?.send(
+      "addModule",
+      FlipperObject.Builder()
+        .put(descriptor.name, getFlipperObjectFor(kvStorage))
+        .build()
+    )
+  }
 
   private fun getKVStorageFor(name: String): IKVStorage {
     for ((kvStorage, descriptor) in kvStorageList.entries) {
@@ -77,12 +90,12 @@ class KVCompatFlipperPlugin : FlipperPlugin {
       responder.success(builder.build())
     }
 
-    connection.receive("getModule") { params, responder ->
-      val name = params.getString("name")
-      if (name != null) {
-        responder.success(getFlipperObjectFor(name))
-      }
-    }
+    // connection.receive("getModule") { params, responder ->
+    //   val name = params.getString("name")
+    //   if (name != null) {
+    //     responder.success(getFlipperObjectFor(name))
+    //   }
+    // }
 
     connection.receive("putValue") { params, responder ->
       val module = params.getString("module")
@@ -94,6 +107,14 @@ class KVCompatFlipperPlugin : FlipperPlugin {
         is Int -> kvStorage.putInt(key, params.getInt("value"))
         is Float -> kvStorage.putFloat(key, params.getFloat("value"))
         is String -> kvStorage.putString(key, params.getString("value"))
+        is Set<*> -> {
+          val flipperArray = FlipperArray(params.getString("value"))
+          val stringSet = mutableSetOf<String>()
+          for (i in 0 until flipperArray.length()) {
+            stringSet.add(flipperArray.get(i).toString())
+          }
+          kvStorage.putStringSet(key, stringSet)
+        }
         else -> throw IllegalArgumentException("Type not supported: $key")
       }
       kvStorage.apply()

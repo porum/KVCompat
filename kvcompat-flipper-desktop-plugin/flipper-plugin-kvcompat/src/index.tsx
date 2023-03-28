@@ -34,7 +34,10 @@ type DeleteKeyParams = {
   key: string;
 };
 
-type Events = { valueChange: ValueChangeEvent };
+type Events = {
+  valueChange: ValueChangeEvent;
+  addModule: any;
+};
 type Methods = {
   getAllModules: (params: {}) => Promise<Record<string, KVMap>>;
   putValue: (params: PutValueParams) => Promise<KVMap>;
@@ -92,6 +95,15 @@ export function plugin(client: PluginClient<Events, Methods>) {
     }),
   );
 
+  client.onMessage('addModule', (event) => {
+    Object.entries(event).forEach(([module, kvMap]) =>
+      updateModule({
+        module: module,
+        kvMap: kvMap,
+      })
+    )
+  });
+
   client.onConnect(async () => {
     const results = await client.send('getAllModules', {});
     Object.entries(results).forEach(([module, kvMap]) =>
@@ -131,7 +143,7 @@ export function Component() {
   return (
     <Layout.Container pad>
       <Layout.Container>
-        <Select value={selectedModule ?? undefined} onChange={instance.setSelectedModule}>
+        <Select value={selectedModule} onChange={instance.setSelectedModule}>
           {Object.keys(modules)
             .sort((a, b) => (a.toLowerCase() > b.toLowerCase() ? 1 : -1))
             .map((name) => (
