@@ -37,8 +37,8 @@ dependencies {
 //    implementation "io.github.porum:kvcompat:$VERSION"
 
     debugImplementation "com.facebook.soloader:soloader:0.10.4"
-    debugImplementation "com.facebook.flipper:flipper:0.179.0"
-    releaseImplementation "com.facebook.flipper:flipper-noop:0.179.0"
+    debugImplementation "com.facebook.flipper:flipper:0.187.1"
+    releaseImplementation "com.facebook.flipper:flipper-noop:0.187.1"
     debugImplementation project(":kvcompat-flipper-plugin")
 //    debugImplementation "io.github.porum:kvcompat-flipper-plugin:$VERSION"
 

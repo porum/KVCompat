@@ -15,6 +15,9 @@
   ],
   "icon": "apps",
   "title": "KVCompat Viewer",
+  "bugs": {
+    "url": "https://github.com/porum/KVCompat/issues"
+  },
   "scripts": {
     "lint": "flipper-pkg lint",
     "prepack": "flipper-pkg lint && flipper-pkg bundle",
@@ -23,18 +26,18 @@
   },
   "peerDependencies": {
     "@emotion/styled": "latest",
-    "antd": "^4.23.4",
-    "flipper-plugin": "0.179.0",
+    "antd": "latest",
+    "flipper-plugin": "latest",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "latest"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.191",
+    "@types/lodash": "latest",
     "@types/react": "17.0.2",
     "@types/react-dom": "17.0.2",
-    "flipper-pkg": "0.179.0"
+    "flipper-pkg": "latest"
   }
 }
