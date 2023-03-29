@@ -45,6 +45,22 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.textfield.TextInputEditText
+      android:id="@+id/versionEt"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:hint="project"
+      android:imeOptions="actionDone"
+      android:inputType="text"
+      android:maxLines="1"
+      android:text="1.0.3" />
+
+  </com.google.android.material.textfield.TextInputLayout>
+
+  <com.google.android.material.textfield.TextInputLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.textfield.TextInputEditText
       android:id="@+id/repositoryEt"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -57,17 +73,10 @@
   </com.google.android.material.textfield.TextInputLayout>
 
   <androidx.appcompat.widget.AppCompatButton
-    android:id="@+id/module1"
+    android:id="@+id/another"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="module1"
-    android:textAllCaps="false" />
-
-  <androidx.appcompat.widget.AppCompatButton
-    android:id="@+id/module2"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="module2"
+    android:text="another"
     android:textAllCaps="false" />
 
 </LinearLayout>

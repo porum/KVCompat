@@ -13,41 +13,36 @@ class MainActivity : AppCompatActivity() {
 
     val authorEt = findViewById<EditText>(R.id.authorEt)
     val projectEt = findViewById<EditText>(R.id.projectEt)
+    val versionEt = findViewById<EditText>(R.id.versionEt)
     val repositoryEt = findViewById<EditText>(R.id.repositoryEt)
 
-    val config = KVCompat.moduleOfMainProcess(this, "config")
-    config.putString("version", "1.0.0")
-
-    val global = KVCompat.moduleOfMainProcess(this, "global")
-    global.putString("author", authorEt.text.toString())
-    global.putString("project", projectEt.text.toString())
-    global.putString("repository", repositoryEt.text.toString())
+    val info = KVCompat.moduleOfMainProcess(this, "info")
+    info.putString("author", authorEt.text.toString())
+    info.putString("project", projectEt.text.toString())
+    info.putString("version", versionEt.text.toString())
+    info.putString("repository", repositoryEt.text.toString())
 
     authorEt.setOnEditorActionListener { v, actionId, event ->
-      global.putString("author", v.text.toString())
+      info.putString("author", v.text.toString())
       return@setOnEditorActionListener true
     }
     projectEt.setOnEditorActionListener { v, actionId, event ->
-      global.putString("project", v.text.toString())
+      info.putString("project", v.text.toString())
       return@setOnEditorActionListener true
     }
     repositoryEt.setOnEditorActionListener { v, actionId, event ->
-      global.putString("repository", v.text.toString())
+      info.putString("repository", v.text.toString())
       return@setOnEditorActionListener true
     }
 
-    findViewById<AppCompatButton>(R.id.module1).setOnClickListener {
-      val module1 = KVCompat.moduleOfMainProcess(this, "module1")
-      module1.putString("key1", "value1")
-    }
-    findViewById<AppCompatButton>(R.id.module2).setOnClickListener {
-      val module2 = KVCompat.moduleOfMainProcess(this, "module2")
-      module2.putInt("key1", 666)
-      module2.putLong("key2", System.currentTimeMillis())
-      module2.putFloat("key3", 3.14F)
-      module2.putBoolean("key4", true)
-      module2.putString("key5", "this is module1")
-      module2.putStringSet("key6", setOf("str0", "str1", "str2"))
+    findViewById<AppCompatButton>(R.id.another).setOnClickListener {
+      val another = KVCompat.moduleOfMainProcess(this, "another")
+      another.putInt("key1", 666)
+      another.putLong("key2", System.currentTimeMillis())
+      another.putFloat("key3", 3.14F)
+      another.putBoolean("key4", true)
+      another.putString("key5", "this is another module")
+      another.putStringSet("key6", setOf("str0", "str1", "str2"))
     }
   }
 
