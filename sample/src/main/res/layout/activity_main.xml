@@ -56,4 +56,18 @@
 
   </com.google.android.material.textfield.TextInputLayout>
 
+  <androidx.appcompat.widget.AppCompatButton
+    android:id="@+id/module1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="module1"
+    android:textAllCaps="false" />
+
+  <androidx.appcompat.widget.AppCompatButton
+    android:id="@+id/module2"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="module2"
+    android:textAllCaps="false" />
+
 </LinearLayout>

@@ -1,10 +1,12 @@
-package io.github.porum.kvcompat
+package io.github.porum.kvcompat.sample
 
 import android.app.Application
 import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperClient
 import com.facebook.soloader.SoLoader
+import io.github.porum.kvcompat.IKVModuleInitCallback
+import io.github.porum.kvcompat.KVCompat
 import io.github.porum.kvcompat.flipper.plugin.KVCompatFlipperPlugin
 import io.github.porum.kvcompat.flipper.plugin.KVStorageDescriptor
 
@@ -21,11 +23,11 @@ class App : Application() {
         it.addPlugin(KVCompatFlipperPlugin(this, emptyList()))
         it.start()
       }
-      observeChanged()
+      observeModuleInit()
     }
   }
 
-  private fun observeChanged() {
+  private fun observeModuleInit() {
     KVCompat.addKVModuleInitCallback(object : IKVModuleInitCallback {
       override fun onFinishInit(module: String, supportMultiProcess: Boolean, isSuccess: Boolean) {
         client?.getPluginByClass(KVCompatFlipperPlugin::class.java)
