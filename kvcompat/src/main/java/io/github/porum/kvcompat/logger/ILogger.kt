@@ -1,5 +1,9 @@
 package io.github.porum.kvcompat.logger
 
+enum class LogLevel {
+  DEBUG, INFO, WARN, ERROR
+}
+
 interface ILogger {
   fun d(tag: String, msg: String)
   fun i(tag: String, msg: String)

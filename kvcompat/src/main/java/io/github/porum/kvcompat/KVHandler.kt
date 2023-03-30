@@ -5,21 +5,21 @@ import com.tencent.mmkv.MMKVLogLevel
 import com.tencent.mmkv.MMKVRecoverStrategic
 import io.github.porum.kvcompat.logger.LogUtils
 
-private const val TAG = "KVErrorHandler"
+private const val TAG = "KVCompat.Handler"
 
 private const val RECOVER_CRC_CHECK_FAIL = 1
 private const val RECOVER_FILE_LENGTH_ERROR = 2
 
-class KVErrorHandler(private val instanceMap: Map<String, IKVStorage>) : MMKVHandler {
+class KVHandler(private val instanceMap: Map<String, IKVStorage>) : MMKVHandler {
 
   override fun onMMKVCRCCheckFail(mmapID: String): MMKVRecoverStrategic {
     trackMMKVRecover(mmapID, RECOVER_CRC_CHECK_FAIL)
-    return MMKVRecoverStrategic.OnErrorDiscard
+    return KVCompat.getConfig().crcCheckFailStrategic
   }
 
   override fun onMMKVFileLengthError(mmapID: String): MMKVRecoverStrategic {
     trackMMKVRecover(mmapID, RECOVER_FILE_LENGTH_ERROR)
-    return MMKVRecoverStrategic.OnErrorDiscard
+    return KVCompat.getConfig().fileLengthErrorStrategic
   }
 
   override fun wantLogRedirecting() = true

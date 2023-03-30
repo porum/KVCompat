@@ -19,7 +19,7 @@ class MMKVStorage(
   override val supportMultiProcess: Boolean,
 ) : IKVStorage {
   companion object {
-    private const val TAG = "MMKVStorage"
+    private const val TAG = "KVCompat.MMKVStorage"
   }
 
   private val changedListeners = CopyOnWriteArrayList<OnSharedPreferenceChangeListener>()

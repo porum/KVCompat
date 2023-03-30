@@ -5,35 +5,50 @@ import io.github.porum.kvcompat.KVCompat
 object LogUtils {
 
   private val logger: ILogger
-    get() = KVCompat.getLogger() ?: ILogger
+    get() = KVCompat.getConfig().logger
+
+  private val logLevel: LogLevel
+    get() = KVCompat.getConfig().logLevel
 
   @JvmStatic
   fun d(tag: String, message: String) {
-    logger.d(tag, message)
+    if (LogLevel.DEBUG.ordinal >= logLevel.ordinal) {
+      logger.d(tag, message)
+    }
   }
 
   @JvmStatic
   fun i(tag: String, message: String) {
-    logger.i(tag, message)
+    if (LogLevel.INFO.ordinal >= logLevel.ordinal) {
+      logger.i(tag, message)
+    }
   }
 
   @JvmStatic
   fun w(tag: String, message: String) {
-    logger.w(tag, message)
+    if (LogLevel.WARN.ordinal >= logLevel.ordinal) {
+      logger.w(tag, message)
+    }
   }
 
   @JvmStatic
   fun w(tag: String, message: String, throwable: Throwable) {
-    logger.w(tag, message, throwable)
+    if (LogLevel.WARN.ordinal >= logLevel.ordinal) {
+      logger.w(tag, message, throwable)
+    }
   }
 
   @JvmStatic
   fun e(tag: String, message: String) {
-    logger.e(tag, message)
+    if (LogLevel.ERROR.ordinal >= logLevel.ordinal) {
+      logger.e(tag, message)
+    }
   }
 
   @JvmStatic
   fun e(tag: String, message: String, throwable: Throwable) {
-    logger.e(tag, message, throwable)
+    if (LogLevel.ERROR.ordinal >= logLevel.ordinal) {
+      logger.e(tag, message, throwable)
+    }
   }
 }

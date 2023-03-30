@@ -15,7 +15,7 @@ import io.github.porum.kvcompat.logger.LogUtils;
  * Created by panda on 2021/4/8 10:46
  */
 public class KVColdStartMonitor {
-  private static final String TAG = "KVColdStartMonitor";
+  private static final String TAG = "KVCompat.ColdStartMonitor";
   private static long startInitTime;
   private static final Map<String, Long> moduleInitTimeMap = new LinkedHashMap<>();
   private static final IKVModuleInitCallback kvModuleInitCallback = new IKVModuleInitCallback() {
@@ -44,7 +44,7 @@ public class KVColdStartMonitor {
   private static final IKVEditorCallback kvEditorCallback = new IKVEditorCallback() {
     @Override
     public void onPutString(@NotNull String module, @NotNull String key, @NotNull String value) {
-      if (value.length() > 150) {
+      if (value.length() > KVCompat.getConfig().getMaxStringLength()) {
         LogUtils.w(TAG, "onPutString value too large, module: " + module + ", key: " + key + ", value: " + value);
       }
     }
@@ -52,7 +52,7 @@ public class KVColdStartMonitor {
     @Override
     public void onPutStringSet(@NotNull String module, @NotNull String key, @NotNull Set<String> values) {
       for (String str : values) {
-        if (str.length() > 150) {
+        if (str.length() > KVCompat.getConfig().getMaxStringLength()) {
           LogUtils.w(TAG, "onPutStringSet value too large, module: " + module + ", key: " + key + ", value: " + str);
         }
       }

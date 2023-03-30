@@ -17,7 +17,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.github.porum.kvcompat.impl.DummyKVStorage;
 import io.github.porum.kvcompat.impl.MMKVStorage;
 import io.github.porum.kvcompat.impl.SPStorage;
-import io.github.porum.kvcompat.logger.ILogger;
 import io.github.porum.kvcompat.utils.AppUtils;
 import io.github.porum.kvcompat.logger.LogUtils;
 import io.github.porum.kvcompat.utils.PreConditions;
@@ -27,8 +26,6 @@ import io.github.porum.kvcompat.utils.PreConditions;
  */
 public class KVCompat {
   private static final String TAG = "KVCompat";
-
-  private static final int MAX_RETRY_COUNT = 3;
 
   private static volatile boolean isInit = false;
   private static int retryCount = 0;
@@ -61,18 +58,20 @@ public class KVCompat {
     }
   };
 
-  private static ILogger sLogger;
+  private static Config sConfig;
 
-  public static void setLogger(ILogger logger) {
-    sLogger = logger;
+  public static void setConfig(Config config) {
+    sConfig = config;
   }
 
-  public static ILogger getLogger() {
-    return sLogger;
+  public static Config getConfig() {
+    if (sConfig == null) {
+      sConfig = new Config.Builder().build();
+    }
+    return sConfig;
   }
 
   public static IKVStorage moduleOfMainProcess(Context context, String module) {
-    LogUtils.i(TAG, "moduleOfMainProcess call, module: " + module);
     if (!AppUtils.isMainProcess(context)) {
       String errMsg = "method moduleOfMainProcess can not to be called in sub process, module: " + module + ", process: " + AppUtils.getCurrentProcessName(context);
       if (!BuildConfig.DEBUG) {
@@ -85,7 +84,6 @@ public class KVCompat {
   }
 
   public static IKVStorage moduleAppendProcessName(Context context, String module) {
-    LogUtils.i(TAG, "moduleAppendProcessName call, module: " + module);
     String processName = AppUtils.getCurrentProcessName(context);
     if (!TextUtils.isEmpty(processName)) {
       String[] splits = processName.split(":");
@@ -133,13 +131,12 @@ public class KVCompat {
     }
 
 
-
     notifyFinishInit(module, supportMultiProcess, isSuccess);
     return storage;
   }
 
   private static boolean retryInit(Context context) {
-    while (!isInit && retryCount < MAX_RETRY_COUNT) {
+    while (!isInit && retryCount < getConfig().getMaxRetryInitCount()) {
       initMMKV(context);
       retryCount++;
     }
@@ -152,11 +149,11 @@ public class KVCompat {
         if (!isInit) {
           try {
             String dir = context.getFilesDir().getAbsolutePath() + "/mmkv";
-            String rootDir = MMKV.initialize(context, dir, null, MMKVLogLevel.LevelInfo, new KVErrorHandler(instanceMap));
-            LogUtils.i(TAG, "mmkv version: " + MMKV.version() + ", root: " + rootDir);
+            String rootDir = MMKV.initialize(context, dir, null, MMKVLogLevel.LevelInfo, new KVHandler(instanceMap));
+            LogUtils.i(TAG, "init mmkv success, version: " + MMKV.version() + ", root: " + rootDir);
             isInit = true;
           } catch (Throwable th) {
-            LogUtils.e(TAG, "initMMKV failed.", th);
+            LogUtils.e(TAG, "init mmkv failed.", th);
           }
         }
       }

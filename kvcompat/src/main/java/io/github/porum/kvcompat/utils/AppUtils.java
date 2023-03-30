@@ -12,7 +12,7 @@ import java.util.List;
 import io.github.porum.kvcompat.logger.LogUtils;
 
 public class AppUtils {
-  private static final String TAG = "AppUtils";
+  private static final String TAG = "KVCompat.AppUtils";
 
   private static volatile String currentProcessName = "";
 
