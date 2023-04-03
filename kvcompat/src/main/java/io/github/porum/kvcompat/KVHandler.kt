@@ -10,16 +10,16 @@ private const val TAG = "KVCompat.Handler"
 private const val RECOVER_CRC_CHECK_FAIL = 1
 private const val RECOVER_FILE_LENGTH_ERROR = 2
 
-class KVHandler(private val instanceMap: Map<String, IKVStorage>) : MMKVHandler {
+internal class KVHandler(private val instanceMap: Map<String, IKVStorage>) : MMKVHandler {
 
   override fun onMMKVCRCCheckFail(mmapID: String): MMKVRecoverStrategic {
     trackMMKVRecover(mmapID, RECOVER_CRC_CHECK_FAIL)
-    return KVCompat.getConfig().crcCheckFailStrategic
+    return KVCompat.config.crcCheckFailStrategic
   }
 
   override fun onMMKVFileLengthError(mmapID: String): MMKVRecoverStrategic {
     trackMMKVRecover(mmapID, RECOVER_FILE_LENGTH_ERROR)
-    return KVCompat.getConfig().fileLengthErrorStrategic
+    return KVCompat.config.fileLengthErrorStrategic
   }
 
   override fun wantLogRedirecting() = true

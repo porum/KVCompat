@@ -7,7 +7,7 @@ import io.github.porum.kvcompat.IKVStorage
 /**
  * Created by panda on 2021/4/2 20:13
  */
-class DummyKVStorage(
+internal class DummyKVStorage(
   override val name: String,
   override val supportMultiProcess: Boolean,
 ) : IKVStorage {

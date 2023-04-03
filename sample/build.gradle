@@ -33,10 +33,10 @@ android {
 }
 
 dependencies {
-//    implementation project(":kvcompat")
-//    debugImplementation project(":kvcompat-flipper-plugin")
-    implementation "io.github.porum:kvcompat:$VERSION"
-    debugImplementation "io.github.porum:kvcompat-flipper-plugin:$VERSION"
+    implementation project(":kvcompat")
+    debugImplementation project(":kvcompat-flipper-plugin")
+//    implementation "io.github.porum:kvcompat:$VERSION"
+//    debugImplementation "io.github.porum:kvcompat-flipper-plugin:$VERSION"
 
     debugImplementation "com.facebook.soloader:soloader:0.10.4"
     debugImplementation "com.facebook.flipper:flipper:0.187.1"

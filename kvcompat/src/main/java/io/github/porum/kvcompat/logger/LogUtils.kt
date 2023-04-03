@@ -2,13 +2,13 @@ package io.github.porum.kvcompat.logger
 
 import io.github.porum.kvcompat.KVCompat
 
-object LogUtils {
+internal object LogUtils {
 
   private val logger: ILogger
-    get() = KVCompat.getConfig().logger
+    get() = KVCompat.config.logger
 
   private val logLevel: LogLevel
-    get() = KVCompat.getConfig().logLevel
+    get() = KVCompat.config.logLevel
 
   @JvmStatic
   fun d(tag: String, message: String) {

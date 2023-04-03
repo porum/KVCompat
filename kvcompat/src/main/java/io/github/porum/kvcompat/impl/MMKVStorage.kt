@@ -13,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 /**
  * Created by panda on 2021/4/2 18:43
  */
-class MMKVStorage(
+internal class MMKVStorage(
   private val mmkv: MMKV,
   override val name: String,
   override val supportMultiProcess: Boolean,

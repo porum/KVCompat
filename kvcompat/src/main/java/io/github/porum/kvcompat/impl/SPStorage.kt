@@ -7,7 +7,7 @@ import io.github.porum.kvcompat.IKVStorage
 /**
  * Created by panda on 2021/4/2 18:38
  */
-class SPStorage(
+internal class SPStorage(
   private val sp: SharedPreferences,
   override val name: String,
   override val supportMultiProcess: Boolean,

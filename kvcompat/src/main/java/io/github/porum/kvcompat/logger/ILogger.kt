@@ -1,7 +1,19 @@
 package io.github.porum.kvcompat.logger
 
+import com.tencent.mmkv.MMKVLogLevel
+
 enum class LogLevel {
-  DEBUG, INFO, WARN, ERROR
+  DEBUG, INFO, WARN, ERROR, NONE
+}
+
+internal fun LogLevel.getMMKVLogLevel(): MMKVLogLevel {
+  return when (this) {
+    LogLevel.DEBUG -> MMKVLogLevel.LevelDebug
+    LogLevel.INFO -> MMKVLogLevel.LevelInfo
+    LogLevel.WARN -> MMKVLogLevel.LevelWarning
+    LogLevel.ERROR -> MMKVLogLevel.LevelError
+    LogLevel.NONE -> MMKVLogLevel.LevelNone
+  }
 }
 
 interface ILogger {

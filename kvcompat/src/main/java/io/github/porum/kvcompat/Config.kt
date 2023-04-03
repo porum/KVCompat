@@ -7,8 +7,8 @@ import io.github.porum.kvcompat.logger.LogLevel
 class Config internal constructor(
   val logger: ILogger,
   val logLevel: LogLevel,
+  val enableThrow: Boolean,
   val maxRetryInitCount: Int,
-  val maxStringLength: Int,
   val crcCheckFailStrategic: MMKVRecoverStrategic,
   val fileLengthErrorStrategic: MMKVRecoverStrategic
 ) {
@@ -16,8 +16,8 @@ class Config internal constructor(
   open class Builder {
     private var logger: ILogger = ILogger.DEFAULT
     private var logLevel: LogLevel = LogLevel.INFO
+    private var enableThrow: Boolean = false
     private var maxRetryInitCount: Int = 3
-    private var maxStringLength: Int = 150
     private var crcCheckFailStrategic: MMKVRecoverStrategic = MMKVRecoverStrategic.OnErrorDiscard
     private var fileLengthErrorStrategic: MMKVRecoverStrategic = MMKVRecoverStrategic.OnErrorDiscard
 
@@ -29,12 +29,12 @@ class Config internal constructor(
       this.logLevel = logLevel
     }
 
-    open fun maxRetryInitCount(maxRetryInitCount: Int): Builder = apply {
-      this.maxRetryInitCount = maxRetryInitCount
+    open fun enableThrow(enableThrow: Boolean): Builder = apply {
+      this.enableThrow = enableThrow
     }
 
-    open fun maxStringLength(maxStringLength: Int): Builder = apply {
-      this.maxStringLength = maxStringLength
+    open fun maxRetryInitCount(maxRetryInitCount: Int): Builder = apply {
+      this.maxRetryInitCount = maxRetryInitCount
     }
 
     open fun crcCheckFailStrategic(crcCheckFailStrategic: MMKVRecoverStrategic): Builder = apply {
@@ -49,8 +49,8 @@ class Config internal constructor(
       return Config(
         logger,
         logLevel,
+        enableThrow,
         maxRetryInitCount,
-        maxStringLength,
         crcCheckFailStrategic,
         fileLengthErrorStrategic
       )

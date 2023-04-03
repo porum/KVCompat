@@ -5,10 +5,12 @@ import com.facebook.flipper.android.AndroidFlipperClient
 import com.facebook.flipper.android.utils.FlipperUtils
 import com.facebook.flipper.core.FlipperClient
 import com.facebook.soloader.SoLoader
+import io.github.porum.kvcompat.Config
 import io.github.porum.kvcompat.IKVModuleInitCallback
 import io.github.porum.kvcompat.KVCompat
 import io.github.porum.kvcompat.flipper.plugin.KVCompatFlipperPlugin
 import io.github.porum.kvcompat.flipper.plugin.KVStorageDescriptor
+import io.github.porum.kvcompat.logger.LogLevel
 
 class App : Application() {
 
@@ -16,6 +18,12 @@ class App : Application() {
 
   override fun onCreate() {
     super.onCreate()
+
+    KVCompat.config = Config.Builder()
+      .enableThrow(false)
+      .maxRetryInitCount(3)
+      .logLevel(LogLevel.DEBUG)
+      .build()
 
     SoLoader.init(this, false)
     if (BuildConfig.DEBUG && FlipperUtils.shouldEnableFlipper(this)) {
